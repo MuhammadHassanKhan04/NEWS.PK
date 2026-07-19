@@ -2,12 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AppContext = createContext();
 
-// Default SVG Logo Data URL for NewsPilot AI
+// Default SVG Logo Data URL for NewsPilot
 const DEFAULT_BRAND_LOGO = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none"><circle cx="80" cy="80" r="70" stroke="white" stroke-width="12"/><path d="M50 110V50C50 50 85 50 85 75C85 100 50 100 50 100" stroke="white" stroke-width="14" stroke-linecap="round"/><text x="25" y="150" font-family="Outfit, sans-serif" font-weight="900" font-size="22" fill="white">NEWSPILOT</text></svg>`;
 
 export const AppProvider = ({ children }) => {
-  // Navigation
-  const [activeTab, setActiveTab] = useState('generate'); // Default to AI Generator
+  // Navigation: Default directly to Manual Post Studio
+  const [activeTab, setActiveTab] = useState('studio');
 
   // Brand Kit State (persisted in LocalStorage)
   const [brandKit, setBrandKit] = useState(() => {
@@ -17,7 +17,7 @@ export const AppProvider = ({ children }) => {
     }
     return {
       logo: DEFAULT_BRAND_LOGO,
-      brandName: 'NewsPilot AI',
+      brandName: 'NewsPilot',
       logoPosition: 'top-left', // top-left, top-right, bottom-left, bottom-right
       logoSize: 80, // px height
       socialIconSize: 22, // px radius
@@ -42,23 +42,12 @@ export const AppProvider = ({ children }) => {
   // User Workspace State
   const [user, setUser] = useState({
     name: 'Ali Computers',
-    email: 'ali@newspilot.ai',
+    email: 'ali@newspilot.app',
     workspace: 'My Workspace',
-    plan: 'Pro Plan ($99/mo)',
-    credits: 100,
+    plan: 'Pro Plan',
     totalGenerated: 0,
     isLoggedIn: true
   });
-
-  // Gemini API Key
-  const [apiKey, setApiKey] = useState(() => {
-    return localStorage.getItem('newspilot_gemini_key') || '';
-  });
-
-  const saveApiKey = (key) => {
-    setApiKey(key);
-    localStorage.setItem('newspilot_gemini_key', key);
-  };
 
   // History State (Starts 100% clean with 0 demo items!)
   const [history, setHistory] = useState(() => {
@@ -78,7 +67,7 @@ export const AppProvider = ({ children }) => {
     headline: 'Over 2,000 BYD NEVs Reach Pakistan, Marking the Brand\'s Largest Shipment Yet',
     summary: 'BYD expands electric vehicle presence with a massive delivery of over 2,000 New Energy Vehicles.',
     highlightWords: '',
-    textOffsetY: 0, // Vertical position offset for headline text
+    textOffsetY: 0,
     category: 'MOBILITY & EV',
     company: 'BYD Auto',
     country: 'Pakistan 🇵🇰',
@@ -109,7 +98,6 @@ export const AppProvider = ({ children }) => {
     setHistory(prev => [newEntry, ...prev]);
     setUser(prev => ({
       ...prev,
-      credits: Math.max(0, prev.credits - 1),
       totalGenerated: prev.totalGenerated + 1
     }));
     return newEntry;
@@ -133,8 +121,6 @@ export const AppProvider = ({ children }) => {
       setBrandKit,
       user,
       setUser,
-      apiKey,
-      saveApiKey,
       history,
       addPosterToHistory,
       deletePoster,
