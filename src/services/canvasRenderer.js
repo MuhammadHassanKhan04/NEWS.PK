@@ -179,7 +179,7 @@ function renderBrandLogo(ctx, logoImg, brand, width, height) {
   }
 }
 
-// Render User's Enabled Social Icons Bar
+// Render User's Enabled Social Icons Bar (Prominent, High Visibility)
 function renderSocialBar(ctx, centerX, y, socialIconsConfig) {
   ctx.save();
   const iconMap = [
@@ -197,21 +197,30 @@ function renderSocialBar(ctx, centerX, y, socialIconsConfig) {
     return;
   }
 
-  const spacing = 42;
+  const spacing = 64; // Increased spacing for larger icons
   const startX = centerX - ((enabledIcons.length - 1) * spacing) / 2;
 
-  ctx.font = '600 15px "Inter", sans-serif';
   ctx.textAlign = 'center';
 
   enabledIcons.forEach((iconObj, idx) => {
     const x = startX + idx * spacing;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+    
+    // Background Glass Circle
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.arc(x, y - 5, 14, 0, Math.PI * 2);
+    ctx.arc(x, y - 7, 22, 0, Math.PI * 2);
     ctx.fill();
+    ctx.stroke();
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+    // Icon Label Text
+    ctx.font = '800 20px "Outfit", "Inter", sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    ctx.shadowBlur = 6;
     ctx.fillText(iconObj.label, x, y);
+    ctx.shadowBlur = 0;
   });
   ctx.restore();
 }
@@ -315,7 +324,7 @@ function renderStartupPakistanExactTemplate(ctx, width, height, poster, brand, m
   const rawLines = wrapTextToLines(ctx, headlineText, width - 140, 4);
 
   const lineGap = 68;
-  let textY = height - 130 - (rawLines.length * lineGap);
+  let textY = height - 140 - (rawLines.length * lineGap);
 
   ctx.textAlign = 'left';
 
@@ -360,8 +369,8 @@ function renderStartupPakistanExactTemplate(ctx, width, height, poster, brand, m
     textY += lineGap;
   });
 
-  // 5. Render Enabled Social Media Icons Bar
-  renderSocialBar(ctx, width / 2, height - 42, brand?.socialIcons);
+  // 5. Render Enabled Social Media Icons Bar (Prominent Size)
+  renderSocialBar(ctx, width / 2, height - 50, brand?.socialIcons);
 }
 
 export function exportCanvasAsPNG(canvas, filename = 'newspilot-poster.png') {
