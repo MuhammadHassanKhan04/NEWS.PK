@@ -150,7 +150,7 @@ export default function BrandKitTab() {
             <div className="grid grid-cols-2 gap-2">
               {[
                 { key: 'facebook', label: 'Facebook (f)' },
-                { key: 'instagram', label: 'Instagram (📷)' },
+                { key: 'instagram', label: 'Instagram (IG Logo)' },
                 { key: 'twitter', label: 'X / Twitter (𝕏)' },
                 { key: 'linkedin', label: 'LinkedIn (in)' },
                 { key: 'youtube', label: 'YouTube (▶)' },

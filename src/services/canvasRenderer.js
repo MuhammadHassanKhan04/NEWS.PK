@@ -136,6 +136,50 @@ function tokenizeHeadlineLine(lineText, customHighlightWords = '') {
   return tokens;
 }
 
+// Helper to render official Instagram camera glyph
+function renderInstagramOfficialGlyph(ctx, x, y, size) {
+  ctx.save();
+  ctx.strokeStyle = '#ffffff';
+  ctx.fillStyle = '#ffffff';
+  ctx.lineWidth = Math.max(2, size * 0.11);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+  ctx.shadowBlur = 8;
+
+  const half = size / 2;
+  const boxX = x - half;
+  const boxY = y - half - (size * 0.32);
+
+  // 1. Outer Rounded Square
+  const r = size * 0.28;
+  ctx.beginPath();
+  ctx.moveTo(boxX + r, boxY);
+  ctx.lineTo(boxX + size - r, boxY);
+  ctx.quadraticCurveTo(boxX + size, boxY, boxX + size, boxY + r);
+  ctx.lineTo(boxX + size, boxY + size - r);
+  ctx.quadraticCurveTo(boxX + size, boxY + size, boxX + size - r, boxY + size);
+  ctx.lineTo(boxX + r, boxY + size);
+  ctx.quadraticCurveTo(boxX, boxY + size, boxX, boxY + size - r);
+  ctx.lineTo(boxX, boxY + r);
+  ctx.quadraticCurveTo(boxX, boxY, boxX + r, boxY);
+  ctx.closePath();
+  ctx.stroke();
+
+  // 2. Inner Lens Circle
+  ctx.beginPath();
+  ctx.arc(x, boxY + half, size * 0.25, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // 3. Top Right Flash Dot
+  ctx.beginPath();
+  ctx.arc(x + (size * 0.26), boxY + (size * 0.26), size * 0.07, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
 // Render User's Logo at their chosen position & size
 function renderBrandLogo(ctx, logoImg, brand, width, height) {
   const position = brand?.logoPosition || 'top-left';
@@ -179,16 +223,16 @@ function renderBrandLogo(ctx, logoImg, brand, width, height) {
   }
 }
 
-// Render User's Enabled Social Icons Bar (Clean, Zero Circle, Fully Scalable)
+// Render User's Enabled Social Icons Bar (Clean Official Logos, Zero Circle, Fully Scalable)
 function renderSocialBar(ctx, centerX, y, socialIconsConfig, customIconSize) {
   ctx.save();
   const iconMap = [
-    { key: 'facebook', label: 'f' },
-    { key: 'instagram', label: '📷' },
-    { key: 'twitter', label: '𝕏' },
-    { key: 'linkedin', label: 'in' },
-    { key: 'youtube', label: '▶' },
-    { key: 'website', label: 'www' }
+    { key: 'facebook', label: 'f', type: 'text' },
+    { key: 'instagram', label: 'ig', type: 'instagram_glyph' },
+    { key: 'twitter', label: '𝕏', type: 'text' },
+    { key: 'linkedin', label: 'in', type: 'text' },
+    { key: 'youtube', label: '▶', type: 'text' },
+    { key: 'website', label: 'www', type: 'text' }
   ];
 
   const enabledIcons = iconMap.filter(item => socialIconsConfig?.[item.key] !== false);
@@ -202,17 +246,20 @@ function renderSocialBar(ctx, centerX, y, socialIconsConfig, customIconSize) {
   const startX = centerX - ((enabledIcons.length - 1) * spacing) / 2;
 
   ctx.textAlign = 'center';
-  ctx.font = `800 ${fontSize}px "Outfit", "Inter", sans-serif`;
-  ctx.fillStyle = '#ffffff';
 
   enabledIcons.forEach((iconObj, idx) => {
     const x = startX + idx * spacing;
-    
-    // Crisp Drop Shadow for high contrast over dark vignette background (Zero background circle!)
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-    ctx.shadowBlur = 10;
-    ctx.fillText(iconObj.label, x, y);
-    ctx.shadowBlur = 0;
+
+    if (iconObj.type === 'instagram_glyph') {
+      renderInstagramOfficialGlyph(ctx, x, y, fontSize);
+    } else {
+      ctx.font = `800 ${fontSize}px "Outfit", "Inter", sans-serif`;
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+      ctx.shadowBlur = 10;
+      ctx.fillText(iconObj.label, x, y);
+      ctx.shadowBlur = 0;
+    }
   });
   ctx.restore();
 }
@@ -362,7 +409,7 @@ function renderStartupPakistanExactTemplate(ctx, width, height, poster, brand, m
     textY += lineGap;
   });
 
-  // 5. Render Enabled Social Media Icons Bar (Using Brand Setting Icon Size, Zero Circle!)
+  // 5. Render Enabled Social Media Icons Bar (Using Official Vector Instagram Logo!)
   renderSocialBar(ctx, width / 2, height - 50, brand?.socialIcons, brand?.socialIconSize);
 }
 
