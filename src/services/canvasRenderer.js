@@ -180,7 +180,7 @@ function renderBrandLogo(ctx, logoImg, brand, width, height) {
 }
 
 // Render User's Enabled Social Icons Bar (Prominent, High Visibility)
-function renderSocialBar(ctx, centerX, y, socialIconsConfig) {
+function renderSocialBar(ctx, centerX, y, socialIconsConfig, customIconRadius) {
   ctx.save();
   const iconMap = [
     { key: 'facebook', label: 'f' },
@@ -197,7 +197,8 @@ function renderSocialBar(ctx, centerX, y, socialIconsConfig) {
     return;
   }
 
-  const spacing = 64; // Increased spacing for larger icons
+  const iconRadius = customIconRadius || 22;
+  const spacing = Math.round(iconRadius * 2.8);
   const startX = centerX - ((enabledIcons.length - 1) * spacing) / 2;
 
   ctx.textAlign = 'center';
@@ -210,12 +211,13 @@ function renderSocialBar(ctx, centerX, y, socialIconsConfig) {
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.arc(x, y - 7, 22, 0, Math.PI * 2);
+    ctx.arc(x, y - Math.round(iconRadius * 0.3), iconRadius, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     // Icon Label Text
-    ctx.font = '800 20px "Outfit", "Inter", sans-serif';
+    const fontPx = Math.round(iconRadius * 0.9);
+    ctx.font = `800 ${fontPx}px "Outfit", "Inter", sans-serif`;
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
     ctx.shadowBlur = 6;
@@ -319,12 +321,14 @@ function renderStartupPakistanExactTemplate(ctx, width, height, poster, brand, m
   // 4. Headline Text with Word-Level Yellow Highlights for ONLY user specified words
   const headlineText = poster.headline || 'At Just 17, Muhammad Hassan Khan Founded Ikotek Solutions and Successfully Delivered 100+ Projects';
   const customHighlightWords = poster.highlightWords || '';
+  const textOffsetY = parseInt(poster.textOffsetY) || 0;
 
   ctx.font = `900 44px "${fontFamily}", sans-serif`;
   const rawLines = wrapTextToLines(ctx, headlineText, width - 140, 4);
 
   const lineGap = 68;
-  let textY = height - 140 - (rawLines.length * lineGap);
+  // Apply textOffsetY slider value directly to textY starting position!
+  let textY = height - 140 - (rawLines.length * lineGap) + textOffsetY;
 
   ctx.textAlign = 'left';
 
@@ -369,8 +373,8 @@ function renderStartupPakistanExactTemplate(ctx, width, height, poster, brand, m
     textY += lineGap;
   });
 
-  // 5. Render Enabled Social Media Icons Bar (Prominent Size)
-  renderSocialBar(ctx, width / 2, height - 50, brand?.socialIcons);
+  // 5. Render Enabled Social Media Icons Bar (Using Brand Setting Icon Radius)
+  renderSocialBar(ctx, width / 2, height - 50, brand?.socialIcons, brand?.socialIconSize);
 }
 
 export function exportCanvasAsPNG(canvas, filename = 'newspilot-poster.png') {
