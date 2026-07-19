@@ -20,7 +20,7 @@ export const AppProvider = ({ children }) => {
       brandName: 'NewsPilot',
       logoPosition: 'top-left', // top-left, top-right, bottom-left, bottom-right
       logoSize: 80, // px height
-      socialIconSize: 22, // px radius
+      socialIconSize: 28, // px font size (range 16 to 60)
       accentColor: '#ffc800', // Vibrant Yellow Box Highlight
       fontFamily: 'Outfit',
       socialIcons: {

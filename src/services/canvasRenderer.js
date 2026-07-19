@@ -179,8 +179,8 @@ function renderBrandLogo(ctx, logoImg, brand, width, height) {
   }
 }
 
-// Render User's Enabled Social Icons Bar (Prominent, High Visibility)
-function renderSocialBar(ctx, centerX, y, socialIconsConfig, customIconRadius) {
+// Render User's Enabled Social Icons Bar (Clean, Zero Circle, Fully Scalable)
+function renderSocialBar(ctx, centerX, y, socialIconsConfig, customIconSize) {
   ctx.save();
   const iconMap = [
     { key: 'facebook', label: 'f' },
@@ -197,30 +197,20 @@ function renderSocialBar(ctx, centerX, y, socialIconsConfig, customIconRadius) {
     return;
   }
 
-  const iconRadius = customIconRadius || 22;
-  const spacing = Math.round(iconRadius * 2.8);
+  const fontSize = parseInt(customIconSize) || 28; // Dynamic font size scale (16px to 60px)
+  const spacing = Math.round(fontSize * 2.2);
   const startX = centerX - ((enabledIcons.length - 1) * spacing) / 2;
 
   ctx.textAlign = 'center';
+  ctx.font = `800 ${fontSize}px "Outfit", "Inter", sans-serif`;
+  ctx.fillStyle = '#ffffff';
 
   enabledIcons.forEach((iconObj, idx) => {
     const x = startX + idx * spacing;
     
-    // Background Glass Circle
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(x, y - Math.round(iconRadius * 0.3), iconRadius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    // Icon Label Text
-    const fontPx = Math.round(iconRadius * 0.9);
-    ctx.font = `800 ${fontPx}px "Outfit", "Inter", sans-serif`;
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-    ctx.shadowBlur = 6;
+    // Crisp Drop Shadow for high contrast over dark vignette background (Zero background circle!)
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+    ctx.shadowBlur = 10;
     ctx.fillText(iconObj.label, x, y);
     ctx.shadowBlur = 0;
   });
@@ -327,7 +317,6 @@ function renderStartupPakistanExactTemplate(ctx, width, height, poster, brand, m
   const rawLines = wrapTextToLines(ctx, headlineText, width - 140, 4);
 
   const lineGap = 68;
-  // Apply textOffsetY slider value directly to textY starting position!
   let textY = height - 140 - (rawLines.length * lineGap) + textOffsetY;
 
   ctx.textAlign = 'left';
@@ -373,7 +362,7 @@ function renderStartupPakistanExactTemplate(ctx, width, height, poster, brand, m
     textY += lineGap;
   });
 
-  // 5. Render Enabled Social Media Icons Bar (Using Brand Setting Icon Radius)
+  // 5. Render Enabled Social Media Icons Bar (Using Brand Setting Icon Size, Zero Circle!)
   renderSocialBar(ctx, width / 2, height - 50, brand?.socialIcons, brand?.socialIconSize);
 }
 
