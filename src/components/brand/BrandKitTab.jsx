@@ -4,7 +4,6 @@ import {
   Upload, 
   Check, 
   Sliders, 
-  Globe, 
   Share2, 
   Maximize2, 
   Layout, 
@@ -52,7 +51,7 @@ export default function BrandKitTab() {
             <Sliders className="w-6 h-6 text-emerald-400" /> Poster Brand Settings
           </h1>
           <p className="text-xs text-slate-400">
-            Upload your logo, set logo size/position, and select which social media icons appear on every generated post.
+            Upload your logo, set logo/icon size and placement, and select social media icons for generated posts.
           </p>
         </div>
 
@@ -77,7 +76,7 @@ export default function BrandKitTab() {
                 <img src={brandKit.logo} alt="Logo" className="max-h-full max-w-full object-contain" />
               </div>
               <div>
-                <p className="text-xs font-bold text-white">{brandKit.brandName || 'Startup Pakistan'}</p>
+                <p className="text-xs font-bold text-white">{brandKit.brandName || 'NewsPilot AI'}</p>
                 <p className="text-[10px] text-slate-400">PNG, SVG, JPG</p>
               </div>
             </div>
@@ -174,8 +173,28 @@ export default function BrandKitTab() {
             </div>
           </div>
 
+          {/* Social Icon Size Slider */}
+          <div className="space-y-2 pt-2 border-t border-white/10">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-slate-300 flex items-center gap-1.5">
+                <Maximize2 className="w-3.5 h-3.5 text-emerald-400" /> Social Icons Size ({brandKit.socialIconSize || 22}px)
+              </span>
+            </div>
+            <input
+              type="range"
+              min="14"
+              max="36"
+              value={brandKit.socialIconSize || 22}
+              onChange={(e) => {
+                setBrandKit({ ...brandKit, socialIconSize: parseInt(e.target.value) });
+                triggerNotice();
+              }}
+              className="w-full accent-emerald-500 bg-slate-800 rounded-lg cursor-pointer"
+            />
+          </div>
+
           {/* Main Word Highlight Box Color */}
-          <div className="space-y-2 pt-2">
+          <div className="space-y-2 pt-2 border-t border-white/10">
             <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
               <Palette className="w-3.5 h-3.5 text-emerald-400" /> Main Word Highlight Box Color
             </label>

@@ -10,16 +10,18 @@ import {
   Palette, 
   Sparkles,
   Layers,
-  Check
+  Check,
+  MoveVertical
 } from 'lucide-react';
 
 export default function CanvasStudio() {
-  const { currentPoster, setCurrentPoster, brandKit, setBrandKit, addPosterToHistory } = useApp();
+  const { currentPoster, setCurrentPoster, brandKit, addPosterToHistory } = useApp();
   const canvasRef = useRef(null);
 
   // Manual Editor Fields
   const [headline, setHeadline] = useState(currentPoster.headline || '');
-  const [highlightWords, setHighlightWords] = useState(currentPoster.highlightWords || 'Over 2,000 BYD NEVs, Shipment Yet');
+  const [highlightWords, setHighlightWords] = useState(currentPoster.highlightWords || '');
+  const [textOffsetY, setTextOffsetY] = useState(currentPoster.textOffsetY || 0);
   const [imageUrl, setImageUrl] = useState(currentPoster.imageUrl || '');
   const [platformRatio, setPlatformRatio] = useState(currentPoster.platformRatio || '4:5');
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -42,26 +44,30 @@ export default function CanvasStudio() {
       ...currentPoster,
       headline,
       highlightWords,
+      textOffsetY,
       imageUrl,
       platformRatio,
-      templateId: 'signature'
+      isManualMode: true,
+      templateId: 'manual'
     };
     if (canvasRef.current) {
       renderPosterToCanvas(canvasRef.current, updatedPoster, brandKit);
     }
-  }, [headline, highlightWords, imageUrl, platformRatio, brandKit]);
+  }, [headline, highlightWords, textOffsetY, imageUrl, platformRatio, brandKit]);
 
   const handleSavePoster = () => {
     const newPoster = {
       headline,
       highlightWords,
+      textOffsetY,
       imageUrl,
       platformRatio,
       category: 'MANUAL POST',
       company: brandKit.brandName || 'NewsPilot AI',
       country: 'Global 🌐',
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      templateId: 'signature',
+      templateId: 'manual',
+      isManualMode: true,
       captions: {
         instagram: `🚀 ${headline}\n\n#NewsPilot #News`,
         linkedin: `Breaking: ${headline}`,
@@ -84,7 +90,7 @@ export default function CanvasStudio() {
             <Wand2 className="w-6 h-6 text-emerald-400" /> Manual Post Studio
           </h1>
           <p className="text-xs text-slate-400">
-            Upload custom background image, type headline, and specify exact words to highlight in yellow boxes.
+            Upload custom background image, type headline, adjust vertical text position, and specify highlight words.
           </p>
         </div>
 
@@ -142,24 +148,46 @@ export default function CanvasStudio() {
               />
             </div>
 
-            {/* 3. Highlight Words Input */}
-            <div className="space-y-2">
+            {/* 3. Text Vertical Position Slider (Move Text Up / Down) */}
+            <div className="space-y-2 pt-2 border-t border-white/10">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <MoveVertical className="w-3.5 h-3.5 text-emerald-400" /> Headline Vertical Position ({textOffsetY > 0 ? `+${textOffsetY}px Down` : textOffsetY < 0 ? `${textOffsetY}px Up` : 'Default Center'})
+                </span>
+                {textOffsetY !== 0 && (
+                  <button onClick={() => setTextOffsetY(0)} className="text-[10px] text-emerald-400 font-bold hover:underline">
+                    Reset
+                  </button>
+                )}
+              </div>
+              <input
+                type="range"
+                min="-250"
+                max="250"
+                value={textOffsetY}
+                onChange={(e) => setTextOffsetY(parseInt(e.target.value))}
+                className="w-full accent-emerald-500 bg-slate-800 rounded-lg cursor-pointer"
+              />
+            </div>
+
+            {/* 4. Highlight Words Input */}
+            <div className="space-y-2 pt-2 border-t border-white/10">
               <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                <Palette className="w-3.5 h-3.5 text-yellow-400" /> 3. Specific Words to Highlight (Yellow Box)
+                <Palette className="w-3.5 h-3.5 text-yellow-400" /> 4. Specific Words to Highlight (Yellow Box)
               </label>
               <input
                 type="text"
                 value={highlightWords}
                 onChange={(e) => setHighlightWords(e.target.value)}
-                placeholder="Comma separated words (e.g. Over 2,000, Shipment Yet)"
+                placeholder="Comma separated words (e.g. 17, Ikotek Solutions)"
                 className="w-full glass-input rounded-xl px-3 py-2 text-xs text-white"
               />
               <p className="text-[10px] text-slate-400">
-                Type the exact words or phrases you want wrapped in yellow highlight boxes.
+                Type exact words to highlight. Leave blank for 100% white text.
               </p>
             </div>
 
-            {/* 4. Aspect Ratio Selector */}
+            {/* 5. Aspect Ratio Selector */}
             <div className="space-y-2 pt-2 border-t border-white/10">
               <label className="text-xs font-semibold text-slate-300">Social Media Size</label>
               <div className="grid grid-cols-2 gap-2">

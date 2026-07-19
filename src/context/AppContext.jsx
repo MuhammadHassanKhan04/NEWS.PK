@@ -20,6 +20,7 @@ export const AppProvider = ({ children }) => {
       brandName: 'NewsPilot AI',
       logoPosition: 'top-left', // top-left, top-right, bottom-left, bottom-right
       logoSize: 80, // px height
+      socialIconSize: 22, // px radius
       accentColor: '#ffc800', // Vibrant Yellow Box Highlight
       fontFamily: 'Outfit',
       socialIcons: {
@@ -72,11 +73,12 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('newspilot_history', JSON.stringify(history));
   }, [history]);
 
-  // Current Working Poster (Default Manual Studio starts with 100% white text!)
+  // Current Working Poster
   const [currentPoster, setCurrentPoster] = useState({
     headline: 'Over 2,000 BYD NEVs Reach Pakistan, Marking the Brand\'s Largest Shipment Yet',
     summary: 'BYD expands electric vehicle presence with a massive delivery of over 2,000 New Energy Vehicles.',
-    highlightWords: '', // Empty by default -> 100% simple white text!
+    highlightWords: '',
+    textOffsetY: 0, // Vertical position offset for headline text
     category: 'MOBILITY & EV',
     company: 'BYD Auto',
     country: 'Pakistan 🇵🇰',
